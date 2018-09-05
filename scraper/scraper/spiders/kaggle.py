@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
+from scrapy.linkextractors import LinkExtractor
 
 
-class KagleSpider(scrapy.Spider):
-    name = 'kagle'
+class KaggleSpider(scrapy.Spider):
+    name = 'kaggle'
+
+    #Link extractor for list pages
+    linkExtractor = LinkExtractor(allow='.+', deny=())
 
     def start_requests(self):
         #Enter from the Dataset list
@@ -11,13 +16,16 @@ class KagleSpider(scrapy.Spider):
 
         page_start, page_end = 1, 2
         pages = range(page_start, page_end + 1)
-        
-        for page in pages:
-            url = url_base + str(page)
-            yield scrapy.Request(url=url, callback=self.parse_list)
+
+        yield scrapy.Request(url='https://www.kaggle.com/new-york-state/nys-transportation-fuels-data/home', callback=self.parse_list)
+        # for page in pages:
+        #     url = url_base + str(page)
+        #     yield scrapy.Request(url=url, callback=self.parse_list)
 
     def parse_list(self, response):
-        pass
+        links = self.linkExtractor.extract_links(response)
+        for link in links:
+            self.logger.info(link.url)
 
     def parse_main(self, response):
         pass
@@ -31,7 +39,7 @@ class KagleSpider(scrapy.Spider):
         filename = 'quotes-%s.html' % page
         with open(filename, 'wb') as f:
             f.write(response.body)
-        self.log('Saved file %s' % filename)
+        self.logger.info('Saved file %s' % filename)
 
         #Save the parsed items
         for quote in response.css('div.quote'):
