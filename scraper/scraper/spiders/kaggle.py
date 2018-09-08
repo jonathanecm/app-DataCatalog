@@ -33,7 +33,7 @@ class KaggleSpider(scrapy.Spider):
         data_dataset = json.loads(re.findall(targetRe, data_dataset)[0])
         headers = self.generateHeaders()
         
-        with open('dataOutput.json', 'w') as f:
+        with open('ds_list.json', 'a') as f:
             json.dump(data_dataset, f)
 
         for ds in data_dataset:
@@ -47,8 +47,13 @@ class KaggleSpider(scrapy.Spider):
         targetPath = '//div[@data-component-name="DatasetContainer"]/following-sibling::*[1]/text()'
         targetRe = r'Kaggle\.State\.push\((\{.*\})\)'
         overview = response.selector.xpath(targetPath).extract()[0]
-        overview = json.loads(re.findall(targetRe, overview)[0])['description']
-        self.logger.info(overview)
+        overview = {
+            'id': 'test',
+            'overview': json.loads(re.findall(targetRe, overview)[0])['description']
+        }
+
+        with open('ds_overview.json', 'a') as f:
+            json.dump(overview, f)
 
     def parse(self, response):
         #Save the html
