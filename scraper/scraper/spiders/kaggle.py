@@ -5,37 +5,50 @@ import json
 
 
 class KaggleSpider(scrapy.Spider):
+
     name = 'kaggle'
+    domain = 'https://www.kaggle.com'
+
+    #Generate random header for each request
+    def generateHeaders(self, id=0):
+        headers = {
+            'Accept': '*/*',
+            'User-Agent': self.settings['USERAGENT_CANDIDATES'][id]
+        }
+        return headers
 
     def start_requests(self):
         #Enter from the Dataset list
-        url_base = 'https://www.kaggle.com/datasets?page='
-        headers = {
-            'Accept': '*/*',
-            'User-Agent': self.settings['USERAGENT_CANDIDATES'][0]
-        }
-
         page_start, page_end = 1, 1
         pages = range(page_start, page_end + 1)
+        headers = self.generateHeaders()
 
         for page in pages:
-            url = url_base + str(page)
-            yield scrapy.Request(url=url, headers=headers, callback=self.parse_list)
+            yield scrapy.Request(url=self.domain + '/datasets?page=' + str(page), headers=headers, callback=self.parse_list)
 
     def parse_list(self, response):
         targetPath = '//div[@data-component-name="DatasetList"]/following-sibling::*[1]/text()'
         targetRe = r'"datasetListItems":(\[{.*\])}\)'
         data_dataset = response.selector.xpath(targetPath).extract()[0]
         data_dataset = json.loads(re.findall(targetRe, data_dataset)[0])
+        headers = self.generateHeaders()
         
         with open('dataOutput.json', 'w') as f:
             json.dump(data_dataset, f)
 
+        for ds in data_dataset:
+            yield scrapy.Request(url= self.domain + ds['datasetUrl'] + '/home', headers=headers, callback=self.parse_overview)
+            break
+           
     def parse_main(self, response):
         pass
 
     def parse_overview(self, response):
-        pass
+        targetPath = '//div[@data-component-name="DatasetContainer"]/following-sibling::*[1]/text()'
+        targetRe = r'Kaggle\.State\.push\((\{.*\})\)'
+        overview = response.selector.xpath(targetPath).extract()[0]
+        overview = json.loads(re.findall(targetRe, overview)[0])['description']
+        self.logger.info(overview)
 
     def parse(self, response):
         #Save the html
