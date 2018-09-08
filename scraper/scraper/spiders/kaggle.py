@@ -29,50 +29,22 @@ class KaggleSpider(scrapy.Spider):
     def parse_list(self, response):
         targetPath = '//div[@data-component-name="DatasetList"]/following-sibling::*[1]/text()'
         targetRe = r'"datasetListItems":(\[{.*\])}\)'
-        data_dataset = response.selector.xpath(targetPath).extract()[0]
-        data_dataset = json.loads(re.findall(targetRe, data_dataset)[0])
-        headers = self.generateHeaders()
+        data_list = response.selector.xpath(targetPath).extract_first()
+        data_list = json.loads(re.search(targetRe, data_list).group(1))
         
         with open('ds_list.json', 'a') as f:
-            json.dump(data_dataset, f)
+            json.dump(data_list, f)
 
-        for ds in data_dataset:
-            yield scrapy.Request(url= self.domain + ds['datasetUrl'] + '/home', headers=headers, callback=self.parse_overview)
+        for ds in data_list:
+            headers = self.generateHeaders()
+            yield scrapy.Request(url= self.domain + ds['datasetUrl'], headers=headers, callback=self.parse_main)
             break
            
     def parse_main(self, response):
-        pass
-
-    def parse_overview(self, response):
         targetPath = '//div[@data-component-name="DatasetContainer"]/following-sibling::*[1]/text()'
         targetRe = r'Kaggle\.State\.push\((\{.*\})\)'
-        overview = response.selector.xpath(targetPath).extract()[0]
-        overview = {
-            'id': 'test',
-            'overview': json.loads(re.findall(targetRe, overview)[0])['description']
-        }
+        data_main = response.selector.xpath(targetPath).extract_first()
+        data_main = json.loads(re.search(targetRe, data_main).group(1))
 
-        with open('ds_overview.json', 'a') as f:
-            json.dump(overview, f)
-
-    def parse(self, response):
-        #Save the html
-        page = response.url.split("/")[-2]
-        filename = 'quotes-%s.html' % page
-        with open(filename, 'wb') as f:
-            f.write(response.body)
-        self.logger.info('Saved file %s' % filename)
-
-        #Save the parsed items
-        for quote in response.css('div.quote'):
-            yield {
-                'text': quote.css('span.text::text').extract_first(),
-                'author': quote.css('small.author::text').extract_first(),
-                'tags': quote.css('div.tags a.tag::text').extract(),
-            }
-        
-        #Following request
-        next_page = response.css('li.next a::attr(href)').extract_first()
-        if next_page is not None:
-            next_page = response.urljoin(next_page)
-            yield scrapy.Request(next_page, callback=self.parse)           
+        with open('ds_main.json', 'a') as f:
+            json.dump(data_main, f)
