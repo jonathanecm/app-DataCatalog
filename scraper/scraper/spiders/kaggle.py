@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
-from scrapy.linkextractors import LinkExtractor
+import json
 
 
 class KaggleSpider(scrapy.Spider):
     name = 'kaggle'
 
-    #Link extractor for list pages
-    linkExtractor = LinkExtractor(allow='.+', deny=())
-
     def start_requests(self):
         #Enter from the Dataset list
         url_base = 'https://www.kaggle.com/datasets?page='
+        headers = {
+            'Accept': '*/*',
+            'User-Agent': self.settings['USERAGENT_CANDIDATES'][0]
+        }
 
-        page_start, page_end = 1, 2
+        page_start, page_end = 1, 1
         pages = range(page_start, page_end + 1)
 
-        yield scrapy.Request(url='https://www.kaggle.com/new-york-state/nys-transportation-fuels-data/home', callback=self.parse_list)
-        # for page in pages:
-        #     url = url_base + str(page)
-        #     yield scrapy.Request(url=url, callback=self.parse_list)
+        for page in pages:
+            url = url_base + str(page)
+            yield scrapy.Request(url=url, headers=headers, callback=self.parse_list)
 
     def parse_list(self, response):
-        links = self.linkExtractor.extract_links(response)
-        for link in links:
-            self.logger.info(link.url)
+        targetPath = '//div[@data-component-name="DatasetList"]/following-sibling::*[1]/text()'
+        targetRe = r'"datasetListItems":(\[{.*\])}\)'
+        data_dataset = response.selector.xpath(targetPath).extract()[0]
+        data_dataset = json.loads(re.findall(targetRe, data_dataset)[0])
+        
+        with open('dataOutput.json', 'w') as f:
+            json.dump(data_dataset, f)
 
     def parse_main(self, response):
         pass
