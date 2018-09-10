@@ -6,9 +6,19 @@
 # https://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+import json
+
+#Use the item sample to make sure the data structure hasn't been changed
+class KaggleItem_List(scrapy.Item):
+    with open('ref/kaggle_isample_list.json', 'r') as f:
+        item_list = json.load(f)
+        for key in item_list.keys():
+            exec('{} = scrapy.Field()'.format(key))
 
 
-class ScraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class KaggleItem_Main(scrapy.Item):
+    with open('ref/kaggle_isample_main.json', 'r') as f:
+        item_main = json.load(f)
+        for key in item_main.keys():
+            exec('{} = scrapy.Field()'.format(key))
+            

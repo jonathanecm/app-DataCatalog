@@ -2,7 +2,7 @@
 import scrapy
 import re
 import json
-
+from scraper.items import KaggleItem_List, KaggleItem_Main
 
 class KaggleSpider(scrapy.Spider):
 
@@ -31,14 +31,12 @@ class KaggleSpider(scrapy.Spider):
         targetRe = r'"datasetListItems":(\[{.*\])}\)'
         data_list = response.selector.xpath(targetPath).extract_first()
         data_list = json.loads(re.search(targetRe, data_list).group(1))
-        
-        with open('ds_list.json', 'a') as f:
-            json.dump(data_list, f)
 
         for ds in data_list:
+            yield KaggleItem_List(ds)
+
             headers = self.generateHeaders()
             yield scrapy.Request(url= self.domain + ds['datasetUrl'], headers=headers, callback=self.parse_main)
-            break
            
     def parse_main(self, response):
         targetPath = '//div[@data-component-name="DatasetContainer"]/following-sibling::*[1]/text()'
@@ -46,5 +44,4 @@ class KaggleSpider(scrapy.Spider):
         data_main = response.selector.xpath(targetPath).extract_first()
         data_main = json.loads(re.search(targetRe, data_main).group(1))
 
-        with open('ds_main.json', 'a') as f:
-            json.dump(data_main, f)
+        yield KaggleItem_Main(data_main)
