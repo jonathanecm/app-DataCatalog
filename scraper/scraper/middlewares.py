@@ -5,7 +5,21 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import random
 from scrapy import signals
+
+class RandomUserAgentMiddleware(object):
+    @classmethod
+    def from_crawler(cls, crawler):
+        settings = crawler.settings
+        return cls(settings['USERAGENT_CANDIDATES'])
+    
+    def __init__(self, candidates):
+        self.candidates = candidates
+
+    def process_request(self, request, spider):
+        ua = random.choice(self.candidates)
+        request.headers['User-Agent'] = ua
 
 
 class ScraperSpiderMiddleware(object):
