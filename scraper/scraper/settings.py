@@ -22,6 +22,11 @@ USERAGENT_CANDIDATES = [#Acquire updated user agents from: https://techblog.will
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15'
 ]
 
+import json
+with open('./scraper/ref/credential_mongo.json', 'r') as f:
+    CREDENTIAL_MONGO = json.load(f)
+    MONGO_URI = CREDENTIAL_MONGO['MONGO_URI']
+    MONGO_DATABASE = CREDENTIAL_MONGO['MONGO_DATABASE']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scraper (+http://www.yourdomain.com)'
