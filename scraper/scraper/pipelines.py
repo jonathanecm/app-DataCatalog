@@ -22,9 +22,9 @@ class KagglePipeline(object):
             exporter.file.close()
 
     def process_item(self, item, spider):
-        if 'downloadCount' in item.keys():
+        if type(item) is KaggleItem_List:
             self.exporters['list'].export_item(item)
-        if 'description' in item.keys():
+        if type(item) is KaggleItem_Main:
             self.exporters['main'].export_item(item)
         return item
 

@@ -15,10 +15,13 @@ class KaggleItem_List(scrapy.Item):
         for key in item_list.keys():
             exec('{} = scrapy.Field()'.format(key))
 
-
 class KaggleItem_Main(scrapy.Item):
     with open('ref/kaggle_isample_main.json', 'r') as f:
         item_main = json.load(f)
         for key in item_main.keys():
             exec('{} = scrapy.Field()'.format(key))
             
+class TextItem(scrapy.Item):
+    domain = scrapy.Field()
+    topic = scrapy.Field()
+    text = scrapy.Field()
