@@ -11,8 +11,8 @@ import pymongo
 class KagglePipeline(object):
     def open_spider(self, spider):
         self.exporters = {}
-        self.exporters['list'] = JsonLinesItemExporter(open('ds_list.json', 'ab'))
-        self.exporters['main'] = JsonLinesItemExporter(open('ds_main.json', 'ab'))
+        self.exporters['list'] = JsonLinesItemExporter(open('../data/ds_list.json', 'ab'))
+        self.exporters['main'] = JsonLinesItemExporter(open('../data/ds_main.json', 'ab'))
         for exporter in self.exporters.values():
             exporter.start_exporting()
 
