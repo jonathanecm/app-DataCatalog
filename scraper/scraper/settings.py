@@ -23,7 +23,7 @@ USERAGENT_CANDIDATES = [#Acquire updated user agents from: https://techblog.will
 ]
 
 import json
-with open('./scraper/ref/credential_mongo.json', 'r') as f:
+with open('./ref/credential_mongo.json', 'r') as f:
     CREDENTIAL_MONGO = json.load(f)
     MONGO_URI = CREDENTIAL_MONGO['MONGO_URI']
     MONGO_DATABASE = CREDENTIAL_MONGO['MONGO_DATABASE']
