@@ -1,27 +1,24 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import csv
+from scraper.items import TextItem
 
 class TextSpider(scrapy.Spider):
     name = 'text'
 
     def start_requests(self):
-        links = [
-            # r'https://www.walkerland.com.tw/article/view/192591',
-            r'http://drm88.pixnet.net/blog/post/35096734-肉肉山壽喜燒吃到飽%EF%BC%8C三創生活園區9f%EF%BC%8Ccp值'
-        ]
-
-        for link in links:
-            request = scrapy.Request(url=link, callback=self.parse)
-            request.meta['id'] = '1rr'
-            yield request
+        #Csv with column name, with topic in the first column and target url in the second
+        with open('./ref/text_urls.csv', 'r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            colName = reader.__next__()
+            for row in reader:
+                request = scrapy.Request(url=row[1], callback=self.parse)
+                request.meta['topic'] = row[0]
+                yield request
            
     def parse(self, response):
         targetPath = '//p/parent::*'
-        paragraphs = response.selector.xpath(targetPath).extract()
-        text = '\n'.join(paragraphs)
+        textElements = response.selector.xpath(targetPath).extract()
+        textElements = '\n'.join(textElements)
 
-        # yield TextItem()
-        # with open('some.csv', 'a', newline='', encoding='utf-8') as f:
-        #     writer = csv.writer(f)
-        #     writer.writerow([response.meta['id'], text])
+        yield TextItem(topic=response.meta['topic'], url=response.url, text=textElements)

@@ -22,6 +22,7 @@ class KaggleItem_Main(scrapy.Item):
             exec('{} = scrapy.Field()'.format(key))
             
 class TextItem(scrapy.Item):
-    domain = scrapy.Field()
     topic = scrapy.Field()
+    url = scrapy.Field()
+    domain = scrapy.Field()
     text = scrapy.Field()
