@@ -61,9 +61,10 @@ class TextPipeline_IdDomain(object):
 
     def process_item(self, item, spider):
         if type(item) is TextItem:
+            item['domain'] = 'other'
             for domain in self.domains:
                 if re.search(domain, item['url']): item['domain'] = domain
-        
+
         return item
 
 class TextPipeline_ExtractByDomain(object):
@@ -77,8 +78,8 @@ class TextPipeline_ExtractByDomain(object):
                 
         return list_out
     
-    def extractText(self, tree, clsName, negLine):
-        finder = etree.XPath('//*[@class="{}"]/descendant::p/descendant::text()'.format(clsName))
+    def extractText(self, tree, eFilter, negLine):
+        finder = etree.XPath('//*{}/descendant::p/descendant::text()'.format(eFilter))
         return '\n'.join(self.unique(finder(tree))[:negLine])        
     
     def process_item(self, item, spider):
@@ -86,9 +87,10 @@ class TextPipeline_ExtractByDomain(object):
             tree = etree.HTML(item['text'])
 
             if item['domain'] == 'pixnet':
-                item['text'] = self.extractText(tree, 'article-content-inner', -20)
+                item['text'] = self.extractText(tree, '[@class="article-content-inner"]', -20)
             elif item['domain'] == 'walkerland':
-                item['text'] = self.extractText(tree, 'article-content-inner', -1)
+                item['text'] = self.extractText(tree, '[@class="article-content-inner"]', -5)
+            else: item['text'] = self.extractText(tree, '', -5)
     
         return item
 
