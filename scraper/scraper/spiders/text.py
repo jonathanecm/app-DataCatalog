@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import csv
+import logging
 from scraper.items import TextItem
 
 class TextSpider(scrapy.Spider):
     name = 'text'
+    logging.basicConfig(
+        filename='log/text.log',
+        filemode='w'
+    )
 
     def start_requests(self):
         #Csv with column name, with topic in the first column and target url in the second

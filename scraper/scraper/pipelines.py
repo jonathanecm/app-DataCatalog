@@ -10,6 +10,7 @@ from lxml import etree
 from pathlib import Path
 import pymongo
 import re
+import uuid
 
 class KagglePipeline_JsonLine(object):
     def open_spider(self, spider):
@@ -96,9 +97,9 @@ class TextPipeline_ExtractByDomain(object):
 
 class TextPipeline_CSV(object):
     def open_spider(self, spider):
-        outputPath = Path('../data/text.csv')
+        outputPath = Path('../data/text_{}.csv'.format(str(uuid.uuid4())))
         pathExist = outputPath.exists()
-        self.exporter = CsvItemExporter(outputPath.open('ab'),  include_headers_line=not pathExist, lineterminator='\n')
+        self.exporter = CsvItemExporter(outputPath.open('wb'),  include_headers_line=not pathExist, lineterminator='\n')
         self.exporter.start_exporting()
 
     def close_spider(self, spider):

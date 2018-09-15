@@ -7,6 +7,10 @@ from scraper.items import KaggleItem_List, KaggleItem_Main
 class KaggleSpider(scrapy.Spider):
     name = 'kaggle'
     domain = 'https://www.kaggle.com'
+    logging.basicConfig(
+        filename='log/kaggle.log',
+        filemode='w'
+    )    
 
     def start_requests(self):
         #Enter from the Dataset list
