@@ -2,17 +2,29 @@
 import scrapy
 import re
 import json
+import logging
 from scraper.items import KaggleItem_List, KaggleItem_Main
 
 class KaggleSpider(scrapy.Spider):
     name = 'kaggle'
     domain = 'https://www.kaggle.com'
-    logging.basicConfig(
-        filename='log/kaggle.log',
-        filemode='w'
-    )    
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        #Create file handler and add to logger
+        logger = logging.getLogger()
+        fh = logging.FileHandler('./log/{}.log'.format(cls.name), mode='w')
+        fh.setLevel(logging.DEBUG)
+        logger.addHandler(fh)
+
+        return cls()
 
     def start_requests(self):
+        logging.basicConfig(
+            filename='./log/kaggle.log',
+            filemode='w'
+        )    
+
         #Enter from the Dataset list
         page_start, page_end = 1, 1
         pages = range(page_start, page_end + 1)

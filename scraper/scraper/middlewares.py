@@ -8,6 +8,7 @@
 import random
 from scrapy import signals
 
+#--Downloader
 class RandomUserAgentMiddleware(object):
     @classmethod
     def from_crawler(cls, crawler):
@@ -22,6 +23,7 @@ class RandomUserAgentMiddleware(object):
         request.headers['User-Agent'] = ua
 
 
+#--Template
 class ScraperSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the

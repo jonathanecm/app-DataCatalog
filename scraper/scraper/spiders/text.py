@@ -6,10 +6,16 @@ from scraper.items import TextItem
 
 class TextSpider(scrapy.Spider):
     name = 'text'
-    logging.basicConfig(
-        filename='log/text.log',
-        filemode='w'
-    )
+    
+    @classmethod
+    def from_crawler(cls, crawler):
+        #Create file handler and add to logger
+        logger = logging.getLogger()
+        fh = logging.FileHandler('./log/{}.log'.format(cls.name), mode='w')
+        fh.setLevel(logging.DEBUG)
+        logger.addHandler(fh)
+
+        return cls()
 
     def start_requests(self):
         #Csv with column name, with topic in the first column and target url in the second
