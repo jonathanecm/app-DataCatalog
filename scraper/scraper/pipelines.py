@@ -12,6 +12,7 @@ import pymongo
 import re
 import uuid
 
+#--Kaggle
 class KagglePipeline_JsonLine(object):
     def open_spider(self, spider):
         self.exporters = {}
@@ -33,18 +34,24 @@ class KagglePipeline_JsonLine(object):
         return item
 
 class KagglePipeline_Mongo(object):
-    collection_name = 'scrapy_items'
 
-    def __init__(self, mongo_uri, mongo_db):
-        self.mongo_uri = mongo_uri
-        self.mongo_db = mongo_db
+    # def __init__(self, mongo_uri, mongo_db):
+    #     self.mongo_uri = mongo_uri
+    #     self.mongo_db = mongo_db
+
+    # def from_crawler(cls, crawler):
+    #     return cls(
+    #         mongo_uri=crawler.settings.get('MONGO_URI'),
+    #         mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+    #     )
+    COLLECTION_LIST = 'Kaggle_List'
+    COLLECTION_MAIN = 'Kaggle_Main'
 
     @classmethod
     def from_crawler(cls, crawler):
-        return cls(
-            mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
-        )
+        cls.mongo_uri=crawler.settings.get('MONGO_URI'),
+        cls.mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+        return cls()
 
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(self.mongo_uri)
@@ -54,9 +61,16 @@ class KagglePipeline_Mongo(object):
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db[self.collection_name].insert_one(dict(item))
+        if type(item) is KaggleItem_List:
+            exist = self.db[self.COLLECTION_LIST].find_one_and_replace({'datasetId': item['datasetId']}, dict(item))
+            if not exist: self.db[self.COLLECTION_LIST].insert_one(dict(item))
+        elif type(item) is KaggleItem_Main:
+            exist = self.db[self.COLLECTION_MAIN].find_one_and_replace({'datasetId': item['datasetId']}, dict(item))
+            if not exist: self.db[self.COLLECTION_MAIN].insert_one(dict(item))
         return item
 
+
+#--Pure text
 class TextPipeline_IdDomain(object):
     domains = ['walkerland', 'pixnet']
 

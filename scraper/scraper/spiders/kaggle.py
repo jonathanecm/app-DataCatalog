@@ -26,7 +26,7 @@ class KaggleSpider(scrapy.Spider):
         )    
 
         #Enter from the Dataset list
-        page_start, page_end = 1, 1
+        page_start, page_end = 2, 50
         pages = range(page_start, page_end + 1)
 
         for page in pages:
