@@ -12,7 +12,7 @@ class TextSpider(scrapy.Spider):
         #Create file handler and add to logger
         logger = logging.getLogger()
         fh = logging.FileHandler('./log/{}.log'.format(cls.name), mode='w')
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.INFO)
         logger.addHandler(fh)
 
         return cls()

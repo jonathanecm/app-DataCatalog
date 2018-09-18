@@ -14,7 +14,7 @@ class KaggleSpider(scrapy.Spider):
         #Create file handler and add to logger
         logger = logging.getLogger()
         fh = logging.FileHandler('./log/{}.log'.format(cls.name), mode='w')
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.INFO)
         logger.addHandler(fh)
 
         return cls()
@@ -26,7 +26,7 @@ class KaggleSpider(scrapy.Spider):
         )    
 
         #Enter from the Dataset list
-        page_start, page_end = 2, 50
+        page_start, page_end = 401, 450
         pages = range(page_start, page_end + 1)
 
         for page in pages:
