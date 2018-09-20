@@ -22,6 +22,7 @@ USERAGENT_CANDIDATES = [#Acquire updated user agents from: https://techblog.will
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15'
 ]
 
+#Mongo credential
 import json
 with open('./ref/credential_mongo.json', 'r') as f:
     CREDENTIAL_MONGO = json.load(f)

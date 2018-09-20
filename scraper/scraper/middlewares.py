@@ -10,21 +10,31 @@ import pymongo
 from scrapy.exceptions import IgnoreRequest
 from scrapy import signals
 
-#--Downloader
+
+'''
+------------------------------------------------------------
+Downloader Middlewares
+------------------------------------------------------------
+'''
+#--Create random user agent
 class RandomUserAgentMiddleware(object):
+    
+    #Acquire user agent candidates in 'settings.py'
     @classmethod
     def from_crawler(cls, crawler):
-        settings = crawler.settings
-        return cls(settings['USERAGENT_CANDIDATES'])
+        cls.candidates = crawler.settings['USERAGENT_CANDIDATES']
+        return cls(settings)
     
-    def __init__(self, candidates):
-        self.candidates = candidates
-
+    #Randomly select one from the candidates and update request header
     def process_request(self, request, spider):
         ua = random.choice(self.candidates)
         request.headers['User-Agent'] = ua
 
+
+#--Detect duplicate record by comparing with the dataset id already in the 'Kaggle_Main' collection
 class DuplicateDetectorMiddleware(object):
+
+    #Acquire the dataset id in the collection
     @classmethod
     def from_crawler(cls, crawler):
         mongo_uri=crawler.settings.get('MONGO_URI'),
@@ -38,13 +48,22 @@ class DuplicateDetectorMiddleware(object):
         cls.ids = [item['datasetId'] for item in list(result)]        
         return cls()
     
+    #If exists, drop the request by raising a special error
     def process_request(self, request, spider):
         if 'datasetId' in request.meta.keys():
             if request.meta['datasetId'] in self.ids:
+
+                #This type of error, if not specifically handled, will be ignored by the spider
                 raise IgnoreRequest()
         
 
-#--Template
+
+
+'''
+------------------------------------------------------------
+Middleware Templates
+------------------------------------------------------------
+'''
 class ScraperSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
