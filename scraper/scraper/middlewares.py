@@ -6,6 +6,8 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 import random
+import pymongo
+from scrapy.exceptions import IgnoreRequest
 from scrapy import signals
 
 #--Downloader
@@ -22,6 +24,25 @@ class RandomUserAgentMiddleware(object):
         ua = random.choice(self.candidates)
         request.headers['User-Agent'] = ua
 
+class DuplicateDetectorMiddleware(object):
+    @classmethod
+    def from_crawler(cls, crawler):
+        mongo_uri=crawler.settings.get('MONGO_URI'),
+        mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+        client = pymongo.MongoClient(crawler.settings.get('MONGO_URI'))
+        db = client[crawler.settings.get('MONGO_DATABASE', 'items')]
+        result = db['Kaggle_Main'].find({}, {
+                '_id': False,
+                'datasetId': True
+            })
+        cls.ids = [item['datasetId'] for item in list(result)]        
+        return cls()
+    
+    def process_request(self, request, spider):
+        if 'datasetId' in request.meta.keys():
+            if request.meta['datasetId'] in self.ids:
+                raise IgnoreRequest()
+        
 
 #--Template
 class ScraperSpiderMiddleware(object):

@@ -67,7 +67,8 @@ DOWNLOAD_DELAY = 5
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   'scraper.middlewares.RandomUserAgentMiddleware': 300,
+    'scraper.middlewares.DuplicateDetectorMiddleware': 200,
+    'scraper.middlewares.RandomUserAgentMiddleware': 300,
 }
 
 # Enable or disable extensions
