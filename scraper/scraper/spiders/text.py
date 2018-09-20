@@ -23,8 +23,7 @@ class TextSpider(scrapy.Spider):
     def start_requests(self):
         
         #Start with a list of target urls and corresponding topics from a csv file
-        #Csv with column name, with topic in the first column and target url in the second
-        with open('./ref/text_urls.csv', 'r', newline='', encoding='utf-8') as f:
+        with open('./ref/text_url.csv', 'r', newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
 
             #Skip the first row (the column names)
@@ -32,8 +31,8 @@ class TextSpider(scrapy.Spider):
 
             #Parse each row and yield requests
             for row in reader:
-                request = scrapy.Request(url=row[1], callback=self.parse)
-                request.meta['topic'] = row[0]
+                request = scrapy.Request(url=row[4], callback=self.parse)
+                request.meta['topic'] = row[1]
                 yield request
     
     def parse(self, response):

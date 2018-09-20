@@ -23,7 +23,7 @@ class RandomUserAgentMiddleware(object):
     @classmethod
     def from_crawler(cls, crawler):
         cls.candidates = crawler.settings['USERAGENT_CANDIDATES']
-        return cls(settings)
+        return cls()
     
     #Randomly select one from the candidates and update request header
     def process_request(self, request, spider):
