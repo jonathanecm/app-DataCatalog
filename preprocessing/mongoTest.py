@@ -4,8 +4,11 @@ with open('./scraper/ref/credential_mongo.json', 'r') as f:
     CREDENTIAL_MONGO = json.load(f)
     MONGO_URI = CREDENTIAL_MONGO['MONGO_URI']
     MONGO_DATABASE = CREDENTIAL_MONGO['MONGO_DATABASE']
+    MONGO_USER = CREDENTIAL_MONGO['MONGO_USER']
+    MONGO_PASSWORD = CREDENTIAL_MONGO['MONGO_PASSWORD']
 
-client = pymongo.MongoClient(MONGO_URI)
+connectionStr = 'mongodb://{}:{}@{}'.format(MONGO_USER, MONGO_PASSWORD, MONGO_URI)
+client = pymongo.MongoClient(connectionStr)
 db = client[MONGO_DATABASE]
 db.list_collection_names()
 #Collection is automatically created when used 

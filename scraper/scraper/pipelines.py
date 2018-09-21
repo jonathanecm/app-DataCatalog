@@ -54,13 +54,16 @@ class KagglePipeline_Mongo(object):
     #Acquire Mongo credential from setting
     @classmethod
     def from_crawler(cls, crawler):
-        cls.mongo_uri=crawler.settings.get('MONGO_URI'),
-        cls.mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+        cls.mongo_uri = crawler.settings.get('MONGO_URI')
+        cls.mongo_db = crawler.settings.get('MONGO_DATABASE')
+        cls.mongo_user = crawler.settings.get('MONGO_USER')
+        cls.mongo_pwd = crawler.settings.get('MONGO_PASSWORD')
         return cls()
 
     #Establish db connection
     def open_spider(self, spider):
-        self.client = pymongo.MongoClient(self.mongo_uri)
+        connectionStr = 'mongodb://{}:{}@{}'.format(self.mongo_user, self.mongo_pwd, self.mongo_uri)
+        self.client = pymongo.MongoClient(connectionStr)
         self.db = self.client[self.mongo_db]
 
     #Close db connection

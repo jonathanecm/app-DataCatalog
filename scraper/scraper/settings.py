@@ -28,6 +28,8 @@ with open('./ref/credential_mongo.json', 'r') as f:
     CREDENTIAL_MONGO = json.load(f)
     MONGO_URI = CREDENTIAL_MONGO['MONGO_URI']
     MONGO_DATABASE = CREDENTIAL_MONGO['MONGO_DATABASE']
+    MONGO_USER = CREDENTIAL_MONGO['MONGO_USER']
+    MONGO_PASSWORD = CREDENTIAL_MONGO['MONGO_PASSWORD']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scraper (+http://www.yourdomain.com)'
@@ -68,7 +70,7 @@ DOWNLOAD_DELAY = 5
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    # 'scraper.middlewares.DuplicateDetectorMiddleware': 200,
+    'scraper.middlewares.DuplicateDetectorMiddleware': 200,
     'scraper.middlewares.RandomUserAgentMiddleware': 300,
 }
 
@@ -80,16 +82,16 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-# #    'scraper.pipelines.KagglePipeline_JsonLine': 300,
-#    'scraper.pipelines.KagglePipeline_Mongo': 300,
-# }
-
 ITEM_PIPELINES = {
-   'scraper.pipelines.TextPipeline_IdDomain': 100,
-   'scraper.pipelines.TextPipeline_ExtractByDomain': 200,
-   'scraper.pipelines.TextPipeline_CSV': 300,
+#    'scraper.pipelines.KagglePipeline_JsonLine': 300,
+   'scraper.pipelines.KagglePipeline_Mongo': 300,
 }
+
+# ITEM_PIPELINES = {
+#    'scraper.pipelines.TextPipeline_IdDomain': 100,
+#    'scraper.pipelines.TextPipeline_ExtractByDomain': 200,
+#    'scraper.pipelines.TextPipeline_CSV': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

@@ -28,7 +28,7 @@ class KaggleSpider(scrapy.Spider):
 
         #Enter from the Dataset list
         #The page setting should be moved to cli argument 
-        page_start, page_end = 1, 550
+        page_start, page_end = 244, 550
         pages = range(page_start, page_end + 1)
 
         #Yield a request for each page
