@@ -1,0 +1,32 @@
+import pymongo
+import json
+
+with open('./scraper/ref/credential_mongo.json', 'r') as f:
+    CREDENTIAL_MONGO = json.load(f)
+    MONGO_URI = CREDENTIAL_MONGO['MONGO_URI']
+    MONGO_DATABASE = CREDENTIAL_MONGO['MONGO_DATABASE']
+    MONGO_USER = CREDENTIAL_MONGO['MONGO_USER']
+    MONGO_PASSWORD = CREDENTIAL_MONGO['MONGO_PASSWORD']
+connectionStr = 'mongodb://{}:{}@{}'.format(MONGO_USER, MONGO_PASSWORD, MONGO_URI)
+client = pymongo.MongoClient(connectionStr)
+db = client[MONGO_DATABASE]
+
+db.list_collection_names()
+
+result = db['Kaggle_Main'].find({}, {
+        '_id': False,
+        'datasetId': True
+    })
+ids = [item['datasetId'] for item in list(result)]
+398 in ids
+
+result = db['Kaggle_List'].find({
+        'datasetId': 13996
+    }, {
+        '_id': False,
+        'title': True
+    })
+list(result)
+
+
+client.close()
