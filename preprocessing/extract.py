@@ -1,6 +1,8 @@
 import pymongo
 import json
 
+
+#--Connection
 with open('./scraper/ref/credential_mongo.json', 'r') as f:
     CREDENTIAL_MONGO = json.load(f)
     MONGO_URI = CREDENTIAL_MONGO['MONGO_URI']
@@ -11,22 +13,33 @@ connectionStr = 'mongodb://{}:{}@{}'.format(MONGO_USER, MONGO_PASSWORD, MONGO_UR
 client = pymongo.MongoClient(connectionStr)
 db = client[MONGO_DATABASE]
 
-db.list_collection_names()
 
-result = db['Kaggle_Main'].find({}, {
+#--Sample query
+sample_main = db['Kaggle_Main'].find({'datasetId': 13996}, {
         '_id': False,
-        'datasetId': True
+        'datasetId': True,
+        'title': True,
+        'numberOfViews': True,
+        'overview': True,
+        'description': True
     })
-ids = [item['datasetId'] for item in list(result)]
-398 in ids
-
-result = db['Kaggle_List'].find({
-        'datasetId': 13996
-    }, {
+list(sample_main)
+sample_list = db['Kaggle_List'].find({'datasetId': 13996}, {
         '_id': False,
-        'title': True
-    })
-list(result)
+        'datasetId': True,
+        'title': True,
+        'categories': True
+    })    
+list(sample_list)
 
 
+#--Query
+
+#Join
+#Export
+with open('./data/extracted.json', 'w') as f:
+    json.dump(result_joined, f)
+
+
+#--Clean up
 client.close()
