@@ -61,16 +61,16 @@ df_list.head()
 
 
 #--Join
-
+df_joined = pd.merge(df_list, df_main, on='datasetId')
 
 
 #--Export
-with open('./data/extracted.json', 'w') as f:
-    json.dump(result_joined, f)
+df_joined.to_csv('./data/df_joined.csv', index=False)
 with open('./data/categoryDict.json', 'w') as f:
     json.dump(categoryDict, f)
 
 #Test loading data back
+pd.read_csv('./data/df_joined.csv', index_col=False).head()
 with open('./data/categoryDict.json', 'r') as f:
     print(json.load(f))
 
