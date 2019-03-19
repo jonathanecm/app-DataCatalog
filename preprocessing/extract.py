@@ -44,11 +44,11 @@ df_main = pd.io.json.json_normalize(result_main)
 df_main.head()
 
 result_list = list(db['Kaggle_List'].find({}, fields_list))
-categoryDict = {}
+dict_category = {}
 for doc in result_list:
     for cat in doc['categories']['categories']:
-        if not categoryDict.get(cat['id']):
-            categoryDict[cat['id']] = {
+        if not dict_category.get(cat['id']):
+            dict_category[cat['id']] = {
                 'name': cat['name'],
                 'datasetCount': cat['datasetCount'],
                 'fullPath': cat['fullPath'],
@@ -66,12 +66,12 @@ df_joined = pd.merge(df_list, df_main, on='datasetId')
 
 #--Export
 df_joined.to_csv('./data/df_joined.csv', index=False)
-with open('./data/categoryDict.json', 'w') as f:
-    json.dump(categoryDict, f)
+with open('./data/dict_category.json', 'w') as f:
+    json.dump(dict_category, f)
 
 #Test loading data back
 pd.read_csv('./data/df_joined.csv', index_col=False).head()
-with open('./data/categoryDict.json', 'r') as f:
+with open('./data/dict_category.json', 'r') as f:
     print(json.load(f))
 
 
