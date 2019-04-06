@@ -2,7 +2,7 @@ import pymongo
 import json
 import pandas as pd
 
-
+'''
 #--Connection
 with open('./scraper/ref/credential_mongo.json', 'r') as f:
     CREDENTIAL_MONGO = json.load(f)
@@ -13,6 +13,11 @@ with open('./scraper/ref/credential_mongo.json', 'r') as f:
 connectionStr = 'mongodb://{}:{}@{}'.format(MONGO_USER, MONGO_PASSWORD, MONGO_URI)
 client = pymongo.MongoClient(connectionStr)
 db = client[MONGO_DATABASE]
+
+
+#--Clean up
+client.close()
+
 
 
 #--Target fields
@@ -68,12 +73,10 @@ df_joined = pd.merge(df_list, df_main, on='datasetId')
 df_joined.to_csv('./data/df_joined.csv', index=False)
 with open('./data/dict_category.json', 'w') as f:
     json.dump(dict_category, f)
-
+'''
 #Test loading data back
-pd.read_csv('./data/df_joined.csv', index_col=False).head()
+pd.read_csv('/df_joined.csv', index_col=False).head()
 with open('./data/dict_category.json', 'r') as f:
     print(json.load(f))
 
 
-#--Clean up
-client.close()

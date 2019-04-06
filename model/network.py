@@ -1,5 +1,9 @@
 import networkx as nx
 
+
+
+
+'''
 #Load datasets or graph
 G = nx.read_pajek("test.net")
 
@@ -8,7 +12,8 @@ G = nx.read_pajek("test.net")
 
 #Init graph
 print('test')
-G = nx.Graph()
+G = nx.graph()
+
 
 #'Add nodes
 #TODO: Assign weights according to the dataset popularity 
@@ -26,4 +31,4 @@ G.edges.data()
 G.edges[3, 4]['weight'] += 1
 
 #Export graph
-nx.write_pajek(G, "test.net")
+nx.write_pajek(G, "test.net")'''
